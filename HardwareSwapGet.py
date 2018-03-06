@@ -1,5 +1,5 @@
 #!/usr/bin/python2
-#This script gets deals, offers, and whatever kind of content from /r/hardwareswap and put its into a database.
+#This script gets deals, offers, and whatever kind of content from /r/hardwareswap and put its into a ".txt" file.
 
 import urllib2
 import urllib
