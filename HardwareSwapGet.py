@@ -4,8 +4,8 @@
 import urllib2
 import urllib
 import os
-from getPosts import getPosts
-from formatFixer import formatFixer
+from lib import getPosts
+from lib import formatFixer
 
 config = []
 SubReddit = "https://www.reddit.com/r/hardwareswap"
