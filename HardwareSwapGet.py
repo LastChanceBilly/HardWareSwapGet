@@ -95,7 +95,7 @@ def main():
             writeToDatabase(x, results, options["Dir"])
         results = []
         #For hours
-        time.sleep(int(options["Wait"]) * 360)
+        time.sleep(int(options["Wait"]) * 3600)
         #For minutes
         #time.sleep(int(options["Wait"]) * 60)
         #For seconds
