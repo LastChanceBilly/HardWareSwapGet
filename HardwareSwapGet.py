@@ -85,16 +85,16 @@ def main():
                     results.append("-" + links[counter])
                 #One more title have been processed...
                 counter += 1
-            #Write the results to the "database" (A fancy name for a .txt file)
-            forEmail = ' '
-            for i in results:
-                forEmail += i[1:] + "\n"
-            if(options["SendE"] == "True"):
-                print(options["Email"] + " " + options["Pass"])
-                sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
-            elif(options["SendE"] == "False"):
-                writeToDatabase(x, results, options["Dir"])
-            results = []
+        #Write the results to the "database" (A fancy name for a .txt file)
+        forEmail = ' '
+        for i in results:
+            forEmail += i[1:] + "\n"
+        if(options["SendE"] == "True"):
+            print(options["Email"] + " " + options["Pass"])
+            sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
+        elif(options["SendE"] == "False"):
+            writeToDatabase(x, results, options["Dir"])
+        results = []
         #For hours
         time.sleep(int(options["Wait"]) * 360)
         #For minutes
