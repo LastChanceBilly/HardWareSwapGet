@@ -16,7 +16,7 @@ Posts = "https://www.reddit.com/r/hardwareswap/comments"
 
 def loadConfig():
     #Configuration keywords, just to find them in the HSG.conf
-    keywords = [".Tries: ", ".Dir: ", ".Pages: ", ".Clear_log: ", ".Smt: ", ".Email: ", ".Pass: ", ".SubReddit: ", ".Posts: ", ".Wait: "]
+    keywords = [".Tries: ", ".Dir: ", ".Pages: ", ".Clear_log: ", ".Smt: ", ".Email: ", ".Pass: ", ".SubReddit: ", ".Posts: ", ".Wait: ", ".SendE: "]
     #A dictionary for all our options
     options = {}
     #Where all our searching keywords will be stored
@@ -86,15 +86,17 @@ def main():
                 #One more title have been processed...
                 counter += 1
             #Write the results to the "database" (A fancy name for a .txt file)
-            writeToDatabase(x, results, options["Dir"])
             forEmail = ' '
             for i in results:
                 forEmail += i[1:] + "\n"
-            #sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
+            if(options["SendE"] == "True"):
+                sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
+            elif(options["SendE"] == "False"):
+                writeToDatabase(x, results, options["Dir"])
         #For hours
-        sleep(int(options["Wait"]) * 360)
+        time.sleep(int(options["Wait"]) * 360)
         #For minutes
-        #sleep(int(options["Wait"]) * 60)
+        #time.sleep(int(options["Wait"]) * 60)
         #For seconds
         #time.sleep(int(options["Wait"]))
 if __name__ == '__main__':
