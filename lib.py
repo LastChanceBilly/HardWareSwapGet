@@ -98,6 +98,9 @@ def formatFixer(title):
         rest = rest.replace("w", "[W]", 1)
     return(country + rest[1:])
 def sendEmail(eServer, eUser, ePass, eContent):
-    emailServer = smtplib.SMTP_SSL(eServer, 465)
-    emailServer.login(eUser, ePass)
-    emailServer.sendmail(eUser, eUser, eContent)
+    try:
+        emailServer = smtplib.SMTP_SSL(eServer, 465)
+        emailServer.login(eUser, ePass)
+        emailServer.sendmail(eUser, eUser, eContent)
+    except:
+        print("Couldn't send email")
