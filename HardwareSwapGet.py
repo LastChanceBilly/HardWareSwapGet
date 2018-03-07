@@ -7,38 +7,42 @@ import os
 from lib import getPosts
 from lib import formatFixer
 
-config = []
+#Where our script will look for:
 SubReddit = "https://www.reddit.com/r/hardwareswap"
 Posts = "https://www.reddit.com/r/hardwareswap/comments"
+
 def loadConfig():
+    #Configuration keywords, just to find them in the HSG.conf
+    keywords = [".Tries: ", ".Dir: ", ".Pages: ", ".Clear_log: ", ".Smt: ", ".Email: ", ".Pass: ", ".SubReddit: ", ".Posts: "]
+    #A dictionary for all our options
+    options = {}
+    #Where all our searching keywords will be stored
     reference = []
+    #Open and read Configuration file
     configFile = open("HSG.conf", "r")
     configs = configFile.read()
     configFile.close()
     index = 0
-    def skipComment(index):
-        index = configs.find("#", index)
-        if(index > 0):
-            index = configs.find("\n", index)
-    skipComment(index)
-    index = configs.find(".Tries: ", index) + 7
-    reference.append(configs[index: configs.find("\n", index)])
-    skipComment(index)
-    index = configs.find(".Dir: ", index) + 6
-    reference.append(configs[index: configs.find("\n", index)])
-    skipComment(index)
-    index = configs.find(".Pages: ", index) + 8
-    reference.append(int(configs[index: configs.find("\n", index)]))
-    skipComment(index)
+    #Look for all the configuration keywords in the file
+    for x in keywords:
+        index = configs.find(x) + len(x)
+        #Since the keywords have a '.' and a ':' (i.e: .Tries: ), eliminate those
+        options[x[1:len(x) -2]] = configs[index: configs.find("\n", index)]
     while(configs.find("[>]", index) > 0):
-        skipComment(index)
+        #Find all the searching keywords and append them to reference
         index = configs.find("[>]", index)
         reference.append(configs[index + 3: configs.find("\n", index)])
         index += 1
-    return(reference)
+    return(reference, options)
+def clearLog(delete, File):
+    if (delete == "True"):
+        try:
+            os.remove(File)
+            print('File "{0}" removed'.format(File))
+        except:
+            print('No file "{0}" found'.format(File))
 def writeToDatabase(section, result, File):
-    os.remove(File)
-    with open(File, "a") as db:
+    with open(File, "a+") as db:
         db.write("[" + section.upper() + "]\n")
         for x in result:
             if(x[0] == "+"):
@@ -47,13 +51,14 @@ def writeToDatabase(section, result, File):
                 db.write("Link: " + x[1:] + "\n")
         db.close()
 def main():
-    config = loadConfig()
+    keywords, options = loadConfig()
     try:
-        titles, links = getPosts(SubReddit, Posts, config[2], config[0])
+        titles, links = getPosts(SubReddit, Posts, int(options["Pages"]), int(options["Tries"]))
     except TypeError as e:
         print("Can't connect to page: {0}".format(e))
     results = []
-    for x in config[3:]:
+    #clearLog(options["Clear_log"], options["Dir"])
+    for x in keywords[7:]:
         counter = 0
         for s in titles:
             if(s.find(x) > 0):
@@ -63,6 +68,6 @@ def main():
                     results.append(s)
                 results.append("-" + links[counter])
             counter += 1
-        writeToDatabase(x, results, config[1])
+        writeToDatabase(x, results, options["Dir"])
 if __name__ == '__main__':
     main()

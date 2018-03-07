@@ -1,6 +1,7 @@
 import urllib
 import time
 import urllib2
+import smtplib
 
 
 def getPosts(url, url_to_find, num_of_pages, limit_config):
