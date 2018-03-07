@@ -94,6 +94,7 @@ def main():
                 sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
             elif(options["SendE"] == "False"):
                 writeToDatabase(x, results, options["Dir"])
+            results = []
         #For hours
         time.sleep(int(options["Wait"]) * 360)
         #For minutes
