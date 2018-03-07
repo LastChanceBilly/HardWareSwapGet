@@ -90,6 +90,7 @@ def main():
             for i in results:
                 forEmail += i[1:] + "\n"
             if(options["SendE"] == "True"):
+                print(options["Email"] + " " + options["Pass"])
                 sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
             elif(options["SendE"] == "False"):
                 writeToDatabase(x, results, options["Dir"])
