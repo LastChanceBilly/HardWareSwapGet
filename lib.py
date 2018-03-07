@@ -53,7 +53,7 @@ def getPosts(url, url_to_find, num_of_pages, limit_config):
                 index += 1
             titles.append(content)
             links.append(link)
-        #Here it finds the next button in reddit (at the end of the page), and make it the next target 
+        #Here it finds the next button in reddit (at the end of the page), and make it the next target
         index = page.find('<span class="next-button">', index)
         current_link = page[page.find("https", index): page.find('" ', index)]
         print(current_link)
@@ -97,3 +97,7 @@ def formatFixer(title):
     elif(rest.find("w") > 0):
         rest = rest.replace("w", "[W]", 1)
     return(country + rest[1:])
+def sendEmail(eServer, eUser, ePass, eContent):
+    emailServer = smtplib.SMTP_SSL(eServer, 465)
+    emailServer.login(eUser, ePass)
+    emailServer.sendmail(eUser, eUser, eContent)

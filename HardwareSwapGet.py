@@ -6,6 +6,7 @@ import urllib
 import os
 from lib import getPosts
 from lib import formatFixer
+from lib import sendEmail
 
 #Where our script will look for:
 SubReddit = "https://www.reddit.com/r/hardwareswap"
@@ -55,6 +56,7 @@ def writeToDatabase(section, result, File):
             elif(x[0] == "-"):
                 db.write("Link: " + x[1:] + "\n")
         db.close()
+
 def main():
     #Get the options from loadConfig and save it into keywords and options
     keywords, options = loadConfig()
@@ -64,6 +66,7 @@ def main():
     except TypeError as e:
         print("Can't connect to page: {0}".format(e))
     results = []
+    clearLog(options["Clear_log"], options["Dir"])
     #For every keyword
     for x in keywords:
         counter = 0
@@ -82,5 +85,9 @@ def main():
             counter += 1
         #Write the results to the "database" (A fancy name for a .txt file)
         writeToDatabase(x, results, options["Dir"])
+        forEmail = ' '
+        for i in results:
+            forEmail += i[1:] + "\n"
+        sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
 if __name__ == '__main__':
     main()
