@@ -17,19 +17,24 @@ def getPosts(url, url_to_find, num_of_pages, limit_config):
     current_link = url
     #Try to connect to the page
     while(current_page < num_of_pages + 1):
+        #Initiate some variables
         page = ' '
         request = 0
         tries = 0
+        #While the page is still blank and there are more to process
         while(page == ' ' and tries < limit):
+            #Try to connect to the page and get it's contents...
             try:
                 request = urllib2.Request(current_link)
                 page = urllib2.urlopen(request).read()
-            #If you can't, tell me why
+            #... a few times
             except:
                 print("Can't retrieve content, attempt no.{0}".format(tries))
             tries += 1
+            #If it remained the same (page), wait a little longer and repeat
             if(page == ' '):
                 time.sleep(1)
+        #This is just a reference point for debbuging, dont pay attention to it
         titles.append("--Page no. {0}--".format(current_page))
         links.append("--Page no. {0}--".format(current_page))
         index = 0
@@ -43,10 +48,12 @@ def getPosts(url, url_to_find, num_of_pages, limit_config):
             #Eliminate the / and the _ from it
             content = content.replace("_"," ")
             content = content.replace("/", " ")
+            #If you haven't reached the end of the page, then add 1 to index so it will go for the next link
             if(index > 0):
                 index += 1
             titles.append(content)
             links.append(link)
+        #Here it finds the next button in reddit (at the end of the page), and make it the next target 
         index = page.find('<span class="next-button">', index)
         current_link = page[page.find("https", index): page.find('" ', index)]
         print(current_link)
