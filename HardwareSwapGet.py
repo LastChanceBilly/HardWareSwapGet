@@ -4,6 +4,8 @@
 import urllib2
 import urllib
 import os
+import time
+import datetime
 from lib import getPosts
 from lib import formatFixer
 from lib import sendEmail
@@ -14,7 +16,7 @@ Posts = "https://www.reddit.com/r/hardwareswap/comments"
 
 def loadConfig():
     #Configuration keywords, just to find them in the HSG.conf
-    keywords = [".Tries: ", ".Dir: ", ".Pages: ", ".Clear_log: ", ".Smt: ", ".Email: ", ".Pass: ", ".SubReddit: ", ".Posts: "]
+    keywords = [".Tries: ", ".Dir: ", ".Pages: ", ".Clear_log: ", ".Smt: ", ".Email: ", ".Pass: ", ".SubReddit: ", ".Posts: ", ".Wait: "]
     #A dictionary for all our options
     options = {}
     #Where all our searching keywords will be stored
@@ -56,38 +58,44 @@ def writeToDatabase(section, result, File):
             elif(x[0] == "-"):
                 db.write("Link: " + x[1:] + "\n")
         db.close()
-
 def main():
-    #Get the options from loadConfig and save it into keywords and options
-    keywords, options = loadConfig()
-    #try to get the pages with the getPosts method
-    try:
-        titles, links = getPosts(SubReddit, Posts, int(options["Pages"]), int(options["Tries"]))
-    except TypeError as e:
-        print("Can't connect to page: {0}".format(e))
-    results = []
-    clearLog(options["Clear_log"], options["Dir"])
-    #For every keyword
-    for x in keywords:
-        counter = 0
-        for s in titles:
-            #See if you find it within the title
-            if(s.find(x) > 0):
-                #Here's why the + and - stuff from writeToDatabase
-                #The s[0] thing is for debbuging, dont pay attention to it
-                if(s[0] != "-"):
-                    results.append("+" + formatFixer(s))
-                else:
-                    results.append(s)
-                #Add the correspondant link next to the title
-                results.append("-" + links[counter])
-            #One more title have been processed...
-            counter += 1
-        #Write the results to the "database" (A fancy name for a .txt file)
-        writeToDatabase(x, results, options["Dir"])
-        forEmail = ' '
-        for i in results:
-            forEmail += i[1:] + "\n"
-        sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
+    while(1):
+        #Get the options from loadConfig and save it into keywords and options
+        keywords, options = loadConfig()
+        #try to get the pages with the getPosts method
+        try:
+            titles, links = getPosts(SubReddit, Posts, int(options["Pages"]), int(options["Tries"]))
+        except TypeError as e:
+            print("Can't connect to page: {0}".format(e))
+        results = []
+        clearLog(options["Clear_log"], options["Dir"])
+        #For every keyword
+        for x in keywords:
+            counter = 0
+            for s in titles:
+                #See if you find it within the title
+                if(s.find(x) > 0):
+                    #Here's why the + and - stuff from writeToDatabase
+                    #The s[0] thing is for debbuging, dont pay attention to it
+                    if(s[0] != "-"):
+                        results.append("+" + formatFixer(s))
+                    else:
+                        results.append(s)
+                    #Add the correspondant link next to the title
+                    results.append("-" + links[counter])
+                #One more title have been processed...
+                counter += 1
+            #Write the results to the "database" (A fancy name for a .txt file)
+            writeToDatabase(x, results, options["Dir"])
+            forEmail = ' '
+            for i in results:
+                forEmail += i[1:] + "\n"
+            #sendEmail(options["Smt"], options["Email"], options["Pass"], forEmail)
+        #For hours
+        sleep(int(options["Wait"]) * 360)
+        #For minutes
+        #sleep(int(options["Wait"]) * 60)
+        #For seconds
+        #time.sleep(int(options["Wait"]))
 if __name__ == '__main__':
     main()
