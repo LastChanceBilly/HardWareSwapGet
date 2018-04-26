@@ -4,7 +4,7 @@ This script gets deals, offers, and whatever kind of content from /r/hardwareswa
 
 ## Usage
 
-In order to use it (in linux) you'll need to run it as:
+In order to use it (on linux) you'll need to run it as:
 ```
 $ ./HardWareSwapGet.py &
 ```
